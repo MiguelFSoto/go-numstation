@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 	"github.com/gorilla/mux"
+	"number-station/encrypt"
 )
 
 const keyServerAddr = "serverAddr"
@@ -47,6 +48,14 @@ func getController(w http.ResponseWriter, req *http.Request) {
 func postController(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	fmt.Printf("%s: POST\n", ctx.Value(keyServerAddr))
+	key := []byte(req.Header.Get("key"))
+	msg := []byte(req.Header.Get("msg"))
+	secret, err :=  encrypt.EncryptAES(msg, key)
+	if err != nil {
+		fmt.Println("Encryption error:", err)
+		return
+	}
+	fmt.Printf("Encrypted: %s", secret)
 }
 
 func main() {
